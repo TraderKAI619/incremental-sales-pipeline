@@ -1,1 +1,36 @@
+.RECIPEPREFIX := >
+SHELL := /bin/bash
+PY := python
 
+.PHONY: help ingest silver gold validate demo everything clean
+
+help:
+> @echo "Targets:"
+> @echo "  ingest    - generate raw sample data (fixed seed)"
+> @echo "  silver    - clean & quarantine, compute revenue_jpy"
+> @echo "  gold      - idempotent upsert -> data/gold/fact_sales.csv"
+> @echo "  validate  - 10 DQ checks -> reports/dq_report.md"
+> @echo "  demo      - run demo SQL (DuckDB CLI or Python fallback)"
+> @echo "  everything- ingest -> silver -> gold -> validate -> demo"
+> @echo "  clean     - remove outputs"
+
+everything: ingest silver gold validate demo
+
+ingest:
+> $(PY) scripts/generate_sales.py --days 7 --seed 42
+
+silver:
+> $(PY) scripts/to_silver.py
+
+gold:
+> $(PY) scripts/to_gold.py
+
+validate:
+> $(PY) scripts/validate_gold.py > reports/dq_report.md
+
+demo:
+> ( command -v duckdb >/dev/null 2>&1 && duckdb < sql/demo_queries.sql ) || $(PY) scripts/run_sql.py sql/demo_queries.sql
+
+clean:
+> rm -rf data/silver/* data/gold/* reports/* || true
+> mkdir -p data/silver/quarantine data/gold reports
