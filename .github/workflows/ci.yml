@@ -13,23 +13,31 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: 'pip'
+
       - name: Install deps
         run: |
           python -V
-          pip install -r requirements.txt
-          pip install -q pytest pytest-cov
-      - name: Run pipeline (ingest→silver→gold→validate)
-        run: make everything
-      - name: Run tests
-        run: pytest -q tests/
-      - name: Upload artifacts
+          python -m pip install -U pip
+          python -m pip install -r requirements.txt pytest pytest-cov
+
+      # 建好資料管線（ingest → silver → gold → validate）
+      - name: Build pipeline
+        run: make run
+
+      # 冪等性 + 單元測試 + quarantine 比例門檻
+      - name: Check (idempotency + tests + quarantine)
+        run: make check
+
+      # 產物上傳，方便在 Actions 介面下載查看
+      - name: Upload report/artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: gold
+          name: gold-and-dq
           path: |
-            data/gold/*.csv
-            reports/*.md
+            data/gold/fact_sales.csv
+            reports/dq_report.md
