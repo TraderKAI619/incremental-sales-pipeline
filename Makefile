@@ -1,22 +1,21 @@
 .DEFAULT_GOAL := everything
-
+.DELETE_ON_ERROR:
 .RECIPEPREFIX := >
 
 SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail -c
 MAKEFLAGS += --warn-undefined-variables
 
-# 變數區
-PY   := python3
-DAYS ?= 7
-SEED ?= 42
-# 
+# ===== 變數區 =====
+PY        := python3
+GEN_DAYS ?= 7
+GEN_SEED ?= 42
 
-.PHONY: help ingest silver gold validate demo everything clean run check reset
+.PHONY: help ingest silver gold validate demo everything clean run check reset print-vars
 
 help:
 > @echo "Targets:"
-> @echo "  ingest     - generate raw sample data (days=$(DAYS), seed=$(SEED))"
+> @echo "  ingest     - generate raw sample data (days=$(GEN_DAYS), seed=$(GEN_SEED))"
 > @echo "  silver     - clean & quarantine, compute revenue_jpy"
 > @echo "  gold       - idempotent upsert -> data/gold/fact_sales.csv"
 > @echo "  validate   - 10 DQ checks -> reports/dq_report.md"
@@ -28,7 +27,7 @@ help:
 > @echo "  run        - alias for everything"
 > @echo ""
 > @echo "Variables (override with make VAR=...):"
-> @echo "  DAYS=$(DAYS)  SEED=$(SEED)  PY=$(PY)"
+> @echo "  GEN_DAYS=$(GEN_DAYS)  GEN_SEED=$(GEN_SEED)  PY=$(PY)"
 
 # 一次跑完整流程
 everything: ingest silver gold validate demo
@@ -36,9 +35,9 @@ everything: ingest silver gold validate demo
 # 別名
 run: everything
 
-# 產 raw
+# 產 raw（參數化）
 ingest:
-> $(PY) scripts/generate_sales.py --days $(DAYS) --seed $(SEED)
+> $(PY) scripts/generate_sales.py --days $(GEN_DAYS) --seed $(GEN_SEED)
 
 # raw -> silver（含隔離目錄保險建立）
 silver:
@@ -71,3 +70,8 @@ clean:
 # 清除 raw
 reset:
 > rm -rf data/raw/*.csv
+
+# 偵錯：顯示變數來源
+print-vars:
+> @echo "GEN_DAYS='$(GEN_DAYS)' origin=$(origin GEN_DAYS)"
+> @echo "GEN_SEED='$(GEN_SEED)' origin=$(origin GEN_SEED)"
