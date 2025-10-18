@@ -1,32 +1,39 @@
 .DEFAULT_GOAL := everything
+.DELETE_ON_ERROR:
 .RECIPEPREFIX := >
+
 SHELL := /bin/bash
-PY := python3
+.SHELLFLAGS := -eu -o pipefail -c
+MAKEFLAGS += --warn-undefined-variables
 
-.PHONY: help ingest silver gold validate demo everything clean run check reset
+# ===== 變數區 =====
+PY        := python3
+GEN_DAYS ?= 7
+GEN_SEED ?= 42
 
-reset:
-> rm -rf data/raw/*.csv
+.PHONY: help ingest silver gold validate demo everything clean run check reset print-vars
 
 help:
 > @echo "Targets:"
-> @echo "  ingest    - generate raw sample data (fixed seed)"
-> @echo "  silver    - clean & quarantine, compute revenue_jpy"
-> @echo "  gold      - idempotent upsert -> data/gold/fact_sales.csv"
-> @echo "  validate  - 10 DQ checks -> reports/dq_report.md"
-> @echo "  demo      - run demo SQL (DuckDB CLI or Python fallback)"
-> @echo "  check     - idempotency + tests + quarantine gate"
-> @echo "  everything- ingest -> silver -> gold -> validate -> demo"
-> @echo "  clean     - remove outputs"
-> @echo "  reset     - remove raw inputs"
-> @echo "  run       - alias for everything"
+> @echo "  ingest     - generate raw sample data (days=$(GEN_DAYS), seed=$(GEN_SEED))"
+> @echo "  silver     - clean & quarantine, compute revenue_jpy"
+> @echo "  gold       - idempotent upsert -> data/gold/fact_sales.csv"
+> @echo "  validate   - 10 DQ checks -> reports/dq_report.md"
+> @echo "  demo       - run demo SQL (DuckDB CLI or Python fallback)"
+> @echo "  check      - idempotency + tests + quarantine gate"
+> @echo "  everything - ingest -> silver -> gold -> validate -> demo"
+> @echo "  clean      - remove outputs"
+> @echo "  reset      - remove raw inputs"
+> @echo "  run        - alias for everything"
+> @echo ""
+> @echo "Variables (override with make VAR=...):"
+> @echo "  GEN_DAYS=$(GEN_DAYS)  GEN_SEED=$(GEN_SEED)  PY=$(PY)"
 
 everything: ingest silver gold validate demo
-
 run: everything
 
 ingest:
-> $(PY) scripts/generate_sales.py --days 7 --seed 42
+> $(PY) scripts/generate_sales.py --days $(GEN_DAYS) --seed $(GEN_SEED)
 
 silver:
 > mkdir -p data/silver/quarantine
@@ -37,7 +44,7 @@ gold:
 > $(PY) scripts/to_gold.py
 
 validate:
-> @mkdir -p reports
+> mkdir -p reports
 > $(PY) scripts/validate_gold.py > reports/dq_report.md
 
 demo:
@@ -49,6 +56,10 @@ check:
 clean:
 > rm -rf data/silver/* data/gold/* reports/* || true
 > mkdir -p data/silver/quarantine data/gold reports
+
+reset:
+> rm -rf data/raw/*.csv
+
 print-vars:
-> @echo "DAYS='$(DAYS)' origin=$(origin DAYS)"
-> @echo "SEED='$(SEED)' origin=$(origin SEED)"
+> @echo "GEN_DAYS='$(GEN_DAYS)' origin=$(origin GEN_DAYS)"
+> @echo "GEN_SEED='$(GEN_SEED)' origin=$(origin GEN_SEED)"
