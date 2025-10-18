@@ -3,7 +3,8 @@ FACT = "data/gold/fact_sales.csv"
 QUAR = "data/silver/quarantine"
 
 NK_CANDIDATES = [
-    ["date_id", "geo_id", "product_id"],      # ← 實際 schema
+    ["order_date", "geo_id", "product_id"],   # ← 實際 schema
+    ["date_id", "geo_id", "product_id"],
     ["date", "store_id", "product_id"],
     ["order_date", "store_id", "product_id"],
     ["date", "store_id", "sku"],
@@ -26,8 +27,7 @@ def pick_nk(cols):
 
 def pick_date_col(cols):
     lower = {c.lower(): c for c in cols}
-    # 加入 date_id, updated_at
-    for k in ("date", "order_date", "date_id", "updated_at", "ts", "yyyymmdd"):
+    for k in ("date", "order_date", "date_id", "updated_at", "processed_at", "ts", "yyyymmdd"):
         if k in lower: return lower[k]
     return None
 
@@ -68,7 +68,7 @@ def test_date_range_valid():
     assert col is not None, f"no date column found in: {list(df.columns)}"
     s = df[col]
     try:
-        if col.lower() in ("yyyymmdd", "date_id", "updated_at"):
+        if col.lower() in ("yyyymmdd", "date_id", "updated_at", "processed_at"):
             dt = pd.to_datetime(s.astype("string"), format="%Y%m%d", errors="coerce")
         elif col.lower() == "ts" and pd.api.types.is_numeric_dtype(s):
             unit = "ms" if pd.to_numeric(s, errors="coerce").max() > 1e12 else "s"
@@ -82,7 +82,6 @@ def test_date_range_valid():
     assert dt.max() <= pd.Timestamp("2100-12-31"), f"max date too large: {dt.max()}"
 
 def test_quarantine_reasonable_under_10pct():
-    # 放寬到 10%（你的資料有 9.2%）
     files = glob.glob(os.path.join(QUAR, "**/*.csv"), recursive=True) + \
             glob.glob(os.path.join(QUAR, "*.csv"))
     total_bad = 0

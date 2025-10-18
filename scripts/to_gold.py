@@ -4,9 +4,10 @@ import pandas as pd
 SILVER_DIR = "data/silver"
 GOLD_PATH = "data/gold/fact_sales.csv"
 
-# 自然鍵候選（加入 date_id + geo_id 組合）
+# 自然鍵候選（加入實際 schema）
 NATURAL_KEY_CANDIDATES = [
-    ["date_id", "geo_id", "product_id"],      # ← 你的實際 schema
+    ["order_date", "geo_id", "product_id"],   # ← 實際 schema
+    ["date_id", "geo_id", "product_id"],
     ["date", "store_id", "product_id"],
     ["order_date", "store_id", "product_id"],
     ["date", "store_id", "sku"],
@@ -59,12 +60,12 @@ def make_nk_series(df: pd.DataFrame, key_cols):
 
 def sort_by_date_if_possible(df: pd.DataFrame) -> pd.DataFrame:
     lowers = {c.lower(): c for c in df.columns}
-    # 加入 date_id, updated_at
-    for cand in ("date", "order_date", "date_id", "updated_at", "ts", "yyyymmdd"):
+    # 完整的日期欄位候選
+    for cand in ("date", "order_date", "date_id", "updated_at", "processed_at", "ts", "yyyymmdd"):
         if cand in lowers:
             col = lowers[cand]
             try:
-                if cand in ("yyyymmdd", "date_id", "updated_at"):
+                if cand in ("yyyymmdd", "date_id", "updated_at", "processed_at"):
                     s = pd.to_datetime(df[col].astype("string"), format="%Y%m%d", errors="coerce")
                 elif cand == "ts" and pd.api.types.is_numeric_dtype(df[col]):
                     unit = "ms" if pd.to_numeric(df[col], errors="coerce").max() > 1e12 else "s"
