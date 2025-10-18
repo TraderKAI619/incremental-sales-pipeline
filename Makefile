@@ -2,7 +2,7 @@
 SHELL := /bin/bash
 PY := python
 
-.PHONY: help ingest silver gold validate demo everything clean run
+.PHONY: help ingest silver gold validate demo everything clean run check
 
 help:
 > @echo "Targets:"
@@ -11,6 +11,7 @@ help:
 > @echo "  gold      - idempotent upsert -> data/gold/fact_sales.csv"
 > @echo "  validate  - 10 DQ checks -> reports/dq_report.md"
 > @echo "  demo      - run demo SQL (DuckDB CLI or Python fallback)"
+> @echo "  check     - idempotency + tests + quarantine gate"
 > @echo "  everything- ingest -> silver -> gold -> validate -> demo"
 > @echo "  clean     - remove outputs"
 > @echo "  run       - alias for everything"
@@ -34,6 +35,23 @@ validate:
 
 demo:
 > ( command -v duckdb >/dev/null 2>&1 && duckdb < sql/demo_queries.sql ) || $(PY) scripts/run_sql.py sql/demo_queries.sql
+
+check: everything
+> bash -eu -o pipefail -c '\
+  echo "== Idempotency =="; \
+  r1=$$(($(wc -l < data/gold/fact_sales.csv)-1)); \
+  $(PY) scripts/to_gold.py >/dev/null; \
+  r2=$$(($(wc -l < data/gold/fact_sales.csv)-1)); \
+  test "$$r1" = "$$r2" && echo "  ✅ idempotent" || { echo "  ❌ not idempotent"; exit 1; }; \
+  echo; echo "== Tests =="; pytest -q tests/ || exit 1; \
+  echo; echo "== Quarantine < 25% =="; \
+  bad=0; shopt -s nullglob; \
+  for f in data/silver/quarantine/*.csv; do n=$$(($$(wc -l < "$$f")-1)); (( n>0 )) && bad=$$((bad+n)); done; \
+  gold=$$(($(wc -l < data/gold/fact_sales.csv)-1)); \
+  total=$$((gold+bad)); pct=$$(awk -v b="$$bad" -v t="$$total" '\''BEGIN{if(t==0){print 0}else{printf "%.1f",(b/t)*100}}'\''); \
+  echo "  bad=$$bad, gold=$$gold, total=$$total, pct=$${pct}%"; \
+  awk -v p="$$pct" '\''BEGIN{exit (p<25.0)?0:1}'\'' && echo "  ✅ OK" || { echo "  ❌ too high"; exit 1; } \
+'
 
 clean:
 > rm -rf data/silver/* data/gold/* reports/* || true
