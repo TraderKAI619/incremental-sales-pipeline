@@ -49,3 +49,6 @@ check:
 clean:
 > rm -rf data/silver/* data/gold/* reports/* || true
 > mkdir -p data/silver/quarantine data/gold reports
+print-vars:
+> @echo "DAYS='$(DAYS)' origin=$(origin DAYS)"
+> @echo "SEED='$(SEED)' origin=$(origin SEED)"
