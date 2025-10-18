@@ -6,11 +6,11 @@ SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail -c
 MAKEFLAGS += --warn-undefined-variables
 
-# ----------------------- 變數區（這裡改參數） -----------------------
-PY   := python3     # Python 執行器
-DAYS ?= 7           # 產生 raw 的天數，可用 make DAYS=3 覆寫
-SEED ?= 42          # 隨機種子，可用 make SEED=7 覆寫
-# ----------------------------------------------------------------
+# 變數區
+PY   := python3
+DAYS ?= 7
+SEED ?= 42
+# 
 
 .PHONY: help ingest silver gold validate demo everything clean run check reset
 
