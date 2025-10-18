@@ -61,3 +61,6 @@ check:
 clean:
 > rm -rf data/silver/* data/gold/* reports/* || true
 > mkdir -p data/silver/quarantine data/gold reports
+
+check:
+> scripts/check.sh
