@@ -1,15 +1,17 @@
--- 看前 5 列
+-- ① 看前 5 列
 SELECT * FROM read_csv_auto('data/gold/fact_sales.csv') LIMIT 5;
 
--- 依商店彙總營收 Top 5
-SELECT store_id, SUM(revenue_jpy) AS rev_jpy
+-- ② 依地區(geo_id)彙總營收 Top 5
+SELECT geo_id, SUM(revenue_jpy) AS rev_jpy
 FROM read_csv_auto('data/gold/fact_sales.csv')
 GROUP BY 1
 ORDER BY rev_jpy DESC
 LIMIT 5;
 
--- 依日期彙總（若有 date 欄位）
-SELECT date, SUM(revenue_jpy) AS rev_jpy
+-- ③ 依日期彙總（將 yyyymmdd 的 date_id 轉成日期）
+SELECT
+  strptime(CAST(date_id AS VARCHAR), '%Y%m%d') AS date,
+  SUM(revenue_jpy) AS rev_jpy
 FROM read_csv_auto('data/gold/fact_sales.csv')
 GROUP BY 1
 ORDER BY date
