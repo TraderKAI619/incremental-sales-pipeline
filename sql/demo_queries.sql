@@ -8,9 +8,10 @@ GROUP BY 1
 ORDER BY rev_jpy DESC
 LIMIT 5;
 
--- ③ 依日期彙總（date_id 轉日期）
-SELECT strptime(CAST(date_id AS VARCHAR), '%Y%m%d') AS date,
-       SUM(revenue_jpy) AS rev_jpy
+-- ③ 依日期彙總（order_date 是 YYYYMMDD 格式）
+SELECT 
+  strptime(CAST(order_date AS VARCHAR), '%Y%m%d') AS date,
+  SUM(revenue_jpy) AS rev_jpy
 FROM read_csv_auto('data/gold/fact_sales.csv')
 GROUP BY 1
 ORDER BY date
