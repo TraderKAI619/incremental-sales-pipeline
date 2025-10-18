@@ -2,7 +2,7 @@
 SHELL := /bin/bash
 PY := python
 
-.PHONY: help ingest silver gold validate demo everything clean
+.PHONY: help ingest silver gold validate demo everything clean run
 
 help:
 > @echo "Targets:"
@@ -13,8 +13,11 @@ help:
 > @echo "  demo      - run demo SQL (DuckDB CLI or Python fallback)"
 > @echo "  everything- ingest -> silver -> gold -> validate -> demo"
 > @echo "  clean     - remove outputs"
+> @echo "  run       - alias for everything"
 
 everything: ingest silver gold validate demo
+
+run: everything
 
 ingest:
 > $(PY) scripts/generate_sales.py --days 7 --seed 42
@@ -26,6 +29,7 @@ gold:
 > $(PY) scripts/to_gold.py
 
 validate:
+> @mkdir -p reports
 > $(PY) scripts/validate_gold.py > reports/dq_report.md
 
 demo:
@@ -34,5 +38,3 @@ demo:
 clean:
 > rm -rf data/silver/* data/gold/* reports/* || true
 > mkdir -p data/silver/quarantine data/gold reports
-
-run: everything
