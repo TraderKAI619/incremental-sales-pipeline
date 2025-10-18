@@ -14,3 +14,9 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+.venv/
+__pycache__/
+reports/
+data/silver/
+data/gold/
+*.swp
