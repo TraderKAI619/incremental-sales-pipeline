@@ -1,8 +1,11 @@
+.DEFAULT_GOAL := everything
 .RECIPEPREFIX := >
 SHELL := /bin/bash
-PY := python
+PY := python3
 
-.PHONY: help ingest silver gold validate demo everything clean run check
+.PHONY: help ingest silver gold validate demo everything clean run check reset
+reset:
+> rm -rf data/raw/*.csv
 
 help:
 > @echo "Targets:"
@@ -14,6 +17,7 @@ help:
 > @echo "  check     - idempotency + tests + quarantine gate"
 > @echo "  everything- ingest -> silver -> gold -> validate -> demo"
 > @echo "  clean     - remove outputs"
+> @echo "  reset     - remove raw inputs"
 > @echo "  run       - alias for everything"
 
 everything: ingest silver gold validate demo
