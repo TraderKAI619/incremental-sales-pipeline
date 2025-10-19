@@ -40,7 +40,7 @@ Our pipeline implements comprehensive data quality checks across 5 categories:
 - ⚠️ Quarantine: 4.8% with detailed failure reasons
 - 🎯 Threshold: <25% quarantine (currently 13%)
 
-See [reports/dq_report.md](./reports/dq_report.md) for latest metrics.
+**📊 Latest Quality Reports:** Download from [CI Artifacts](https://github.com/TraderKAI619/incremental-sales-pipeline/actions/workflows/ci.yml?query=branch%3Amain) (每次運行自動更新)
 
 
 ```mermaid
