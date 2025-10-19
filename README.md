@@ -122,4 +122,5 @@ Pipeline Flow
 
 ## Tooling Transparency
 I use AI assistance for boilerplate/doc speed; design, DQ rules, and idempotent strategy are mine.
+
 Focus: reproducibility & observability (tests, dashboard, artifacts).
