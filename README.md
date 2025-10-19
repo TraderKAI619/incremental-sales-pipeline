@@ -40,7 +40,7 @@ Quality Metrics (Last run: 2025-10-20)
 
 ✅ Pass Rate: 95.2% (772/811 records)
 
-⚠️ Quarantine: 4.8% (39 records) — see reasons
+⚠️ Quarantine: 4.8% (39 records) — see reasons (./data/silver/quarantine/README.md)
 
 📊 Gold Output: 261 aggregated rows + 11 returns
 
@@ -56,7 +56,7 @@ quarantine_trends.csv – Historical tracking
 
 fact_returns.csv – Returns analysis
 👉 打開最新成功的 workflow run，於 Artifacts 區塊下載：
-https://github.com/TraderKAI619/incremental-sales-pipeline/actions/workflows/ci.yml?query=branch%3Amain
+[CI artifacts (main branch)](https://github.com/TraderKAI619/incremental-sales-pipeline/actions/workflows/ci.yml?query=branch%3Amain)
 
 ## Architecture 
 ```mermaid
@@ -108,7 +108,7 @@ Pipeline Flow
 ## Known Limitations & Future Work
 - **Scope:** Daily ~1k rows; single process; CSV artifacts.
 - **Production:** S3 partitioning, Parquet, Glue jobs, Athena, CloudWatch alarms; schema evolution policy.
-- **Trade-offs:** Simplicity/reproducibility over scale — see DECISIONS.md
+- **Trade-offs:** Simplicity/reproducibility over scale — see [DECISIONS.md](./DECISIONS.md).
 
 ## Performance Snapshot
 - **Dataset:** 811 input → 261 gold rows
@@ -117,8 +117,8 @@ Pipeline Flow
 (Numbers captured via /usr/bin/time -v make run|check | tee reports/perf_make_run.txt.)
 
 ## Design Notes & Provenance
-- **Decisions (ADR-lite):** see DECISIONS.md
-- **Quarantine examples:** see data/silver/quarantine/README.md
+- **Decisions (ADR-lite):** see [DECISIONS.md](./DECISIONS.md)
+- **Quarantine examples:** see [data/silver/quarantine/README.md](./data/silver/quarantine/README.md)
 
 ## Tooling Transparency
 I use AI assistance for boilerplate/doc speed; design, DQ rules, and idempotent strategy are mine.
