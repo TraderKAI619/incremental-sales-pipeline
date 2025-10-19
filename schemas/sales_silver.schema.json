@@ -1,6 +1,14 @@
-{"name":"sales_silver","primaryKey":["order_date","geo_id","product_id"],
- "required":["order_date","geo_id","product_id","quantity","unit_price","amount"],
- "fields":{"order_date":{"dtype":"date","format":"%Y-%m-%d"},"geo_id":{"dtype":"string"},
- "product_id":{"dtype":"string"},"quantity":{"dtype":"int","min":0,"max":10000},
- "unit_price":{"dtype":"float","min":0.0,"max":100000.0},
- "amount":{"dtype":"float","min":0.0,"max":100000000.0}}}
+{
+  "fields": [
+    {"name": "order_id", "dtype": "string"},
+    {"name": "order_date", "dtype": "date", "format": "%Y%m%d"},
+    {"name": "geo_id", "dtype": "string"},
+    {"name": "product_id", "dtype": "string"},
+    {"name": "quantity", "dtype": "int"},
+    {"name": "unit_price", "dtype": "float"},
+    {"name": "revenue_jpy", "dtype": "float"},
+    {"name": "processed_at", "dtype": "date", "format": "%Y%m%d"}
+  ],
+  "required": ["order_id", "order_date", "geo_id", "product_id", "quantity", "unit_price", "revenue_jpy"],
+  "primaryKey": ["order_id"]
+}
