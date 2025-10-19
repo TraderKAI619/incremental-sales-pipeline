@@ -84,3 +84,19 @@ dashboard: validate
 > @echo "Generating DQ Dashboard..."
 > $(PY) scripts/dq_dashboard.py > reports/dq_dashboard.txt
 > @echo "✅ Dashboard saved to reports/dq_dashboard.txt"
+
+# Extract returns/adjustments analysis
+returns: gold
+> @echo "Extracting returns/adjustments..."
+> $(PY) -c "import pandas as pd, glob; \
+>   df = pd.concat([pd.read_csv(f) for f in glob.glob('data/silver/quarantine/*.csv')]); \
+>   returns = df[df['_bad_reason'].str.contains('neg_or_zero_qty')]; \
+>   returns.to_csv('data/gold/fact_returns.csv', index=False); \
+>   print(f'Extracted {len(returns)} potential returns')"
+> @echo "✅ Returns table created at data/gold/fact_returns.csv"
+
+# Update quarantine trend tracking
+trends: validate
+> $(PY) scripts/update_trends.py
+> @echo "✅ Trends updated in reports/quarantine_trends.csv"
+
