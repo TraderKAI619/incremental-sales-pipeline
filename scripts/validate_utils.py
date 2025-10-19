@@ -85,10 +85,15 @@ def validate_df(df: pd.DataFrame, schema: dict) -> dict:
     
     return report
 
-def write_markdown(path: str | Path, title: str, data: Dict[str, Any]) -> None:
+def write_markdown(report_path: str | Path, title: str, items: dict, mode: str = "w") -> None:
     """Write validation report as markdown"""
-    lines = [f"# {title}\n"]
-    for key, val in data.items():
-        lines.append(f"- **{key}**: {val}")
+    p = Path(report_path)
+    p.parent.mkdir(parents=True, exist_ok=True)
     
-    Path(path).write_text("\n".join(lines), encoding="utf-8")
+    lines = [f"## {title}\n"]
+    for k, v in items.items():
+        lines.append(f"- **{k}**: {v}")
+    lines.append("")  # Empty line after section
+    
+    with p.open(mode, encoding="utf-8") as f:
+        f.write("\n".join(lines))

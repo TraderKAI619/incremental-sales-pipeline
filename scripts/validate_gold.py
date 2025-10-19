@@ -22,7 +22,7 @@ def main():
     if not ok:
         summary["error_samples"] = rep["errors"][:10]
 
-    write_markdown("reports/dq_report.md", "Data Quality Report (Gold)", summary)
+    write_markdown("reports/dq_report.md", "Gold Layer (Aggregated Facts)", summary, mode="a")
     print(summary)
     sys.exit(0 if ok else 2)
 
