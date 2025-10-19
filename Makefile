@@ -22,7 +22,7 @@ help:
 > @echo "  check      - idempotency + tests + quarantine gate"
 > @echo "  everything - ingest -> silver -> gold -> validate -> demo"
 > @echo "  returns    - extract returns/adjustments"
-> @echo "  dashboard  - show DQ dashboard"
+> @echo "  dashboard  - generate comprehensive DQ dashboard"
 > @echo "  trends     - update trend tracking"
 > @echo "  clean      - remove outputs"
 > @echo "  reset      - remove raw inputs"
@@ -68,9 +68,7 @@ returns: gold
 >   returns.to_csv('data/gold/fact_returns.csv', index=False); \
 >   print(f'Extracted {len(returns)} potential returns')"
 
-dashboard: validate
-> $(PY) scripts/dq_dashboard.py
-
+# Generate comprehensive dashboard
 trends: validate
 > $(PY) scripts/update_trends.py
 
@@ -81,3 +79,8 @@ clean:
 
 reset:
 > rm -rf data/raw/*.csv
+
+dashboard: validate
+> @echo "Generating DQ Dashboard..."
+> $(PY) scripts/dq_dashboard.py > reports/dq_dashboard.txt
+> @echo "✅ Dashboard saved to reports/dq_dashboard.txt"
