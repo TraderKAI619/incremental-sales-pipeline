@@ -15,6 +15,7 @@ make run
 
 # 3) Run tests (8 checks incl. idempotency & NK uniqueness)
 pytest -q tests/
+```
 
 ---
 
