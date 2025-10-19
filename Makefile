@@ -52,7 +52,8 @@ gold:
 # 產 DQ 報告
 validate:
 > mkdir -p reports
-> $(PY) scripts/validate_gold.py > reports/dq_report.md
+> $(PY) scripts/validate_silver.py || true
+> $(PY) scripts/validate_gold.py
 
 # Demo SQL（優先用 DuckDB CLI，不在就走 Python fallback）
 demo:
@@ -60,7 +61,10 @@ demo:
 
 # 冪等性 + 測試 + quarantine 比例門檻
 check:
-> ./scripts/check.sh
+> @$(MAKE) run
+> $(PY) scripts/validate_silver.py || true
+> $(PY) scripts/validate_gold.py
+> pytest -q
 
 # 清除輸出層（保留 raw）
 clean:
