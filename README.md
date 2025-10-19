@@ -41,3 +41,41 @@ Our pipeline implements comprehensive data quality checks across 5 categories:
 
 See [reports/dq_report.md](./reports/dq_report.md) for latest metrics.
 
+
+## Architecture
+```mermaid
+graph TD
+    subgraph Bronze
+        A[Raw CSV Files<br/>7 days data]
+    end
+    
+    subgraph Silver
+        B[Data Validation<br/>5 DQ Layers]
+        C[Clean Data<br/>772 records]
+        D[Quarantine<br/>39 records]
+    end
+    
+    subgraph Gold
+        E[fact_sales<br/>261 rows]
+        F[fact_returns<br/>11 rows]
+    end
+    
+    subgraph Monitoring
+        G[DQ Report]
+        H[Dashboard]
+        I[Trends]
+    end
+    
+    A -->|Ingest| B
+    B -->|Pass 95.2%| C
+    B -->|Fail 4.8%| D
+    C -->|Aggregate| E
+    D -->|Extract| F
+    E --> G
+    E --> H
+    C --> I
+    
+    style B fill:#f9f,stroke:#333
+    style C fill:#9f9,stroke:#333
+    style D fill:#f99,stroke:#333
+```
