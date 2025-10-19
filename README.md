@@ -40,8 +40,14 @@ Our pipeline implements comprehensive data quality checks across 5 categories:
 - ⚠️ Quarantine: 4.8% with detailed failure reasons
 - 🎯 Threshold: <25% quarantine (currently 13%)
 
-**📊 Latest Quality Reports:** Download from [CI Artifacts](https://github.com/TraderKAI619/incremental-sales-pipeline/actions/workflows/ci.yml?query=branch%3Amain) (每次運行自動更新)
+**📊 View Latest Reports:**
+All quality reports are automatically generated and available in [GitHub Actions Artifacts](https://github.com/TraderKAI619/incremental-sales-pipeline/actions/workflows/ci.yml?query=branch%3Amain):
+- `dq_report.md` - Silver + Gold validation summary
+- `dq_dashboard.txt` - Comprehensive quality dashboard (2KB)
+- `quarantine_trends.csv` - Historical quality tracking
+- `fact_returns.csv` - Returns/adjustments analysis
 
+> 💡 **Tip:** Click on the latest successful workflow run → Scroll to "Artifacts" section → Download reports
 
 ```mermaid
 graph TD
