@@ -1,22 +1,12 @@
-data/
-reports/
-.vscode/
-*.duckdb
-*.parquet
 .venv/
+__pycache__/
+*.pyc
 
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.pytest_cache/
-*.egg-info/
-dist/
-build/
-.venv/
-__pycache__/
-reports/
+# data outputs
+data/raw/
 data/silver/
 data/gold/
-*.swp
+
+# reports
+reports/
+!reports/.keep
