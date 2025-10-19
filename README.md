@@ -42,7 +42,6 @@ Our pipeline implements comprehensive data quality checks across 5 categories:
 See [reports/dq_report.md](./reports/dq_report.md) for latest metrics.
 
 
-## Architecture
 ```mermaid
 graph TD
     subgraph Bronze
