@@ -1,4 +1,7 @@
 # incremental-sales-pipeline
+
+**🔗 Related Project**: [JP Retail Medallion Pipeline (Project A)](https://github.com/TraderKAI619/project-a-jp-retail-pipeline)
+[![CI](https://github.com/TraderKAI619/incremental-sales-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/TraderKAI619/incremental-sales-pipeline/actions/workflows/ci.yml)
 Idempotent **incremental** sales pipeline with **8+ data-quality checks** (pandas + DuckDB).
 
 ## ⚡ Quick Start (3 steps)
