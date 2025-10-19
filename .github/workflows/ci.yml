@@ -47,6 +47,9 @@ jobs:
       - name: Check (idempotency + tests + quarantine)
         run: make check
 
+      - name: Build dashboard
+        run: make dashboard
+
       - name: Upload report/artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -57,3 +60,4 @@ jobs:
           path: |
             data/gold/fact_sales.csv
             reports/dq_report.md
+            reports/dq_dashboard.txt
