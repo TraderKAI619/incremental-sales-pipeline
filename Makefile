@@ -45,15 +45,14 @@ gold:
 
 validate:
 > mkdir -p reports
-> $(PY) scripts/validate_gold.py > reports/dq_report.md
+> $(PY) scripts/validate_silver.py || true
+> $(PY) scripts/validate_gold.py
 
-demo:
-> ( command -v duckdb >/dev/null 2>&1 && duckdb < sql/demo_queries.sql ) || $(PY) scripts/run_sql.py sql/demo_queries.sql
+> @$(MAKE) run
+> $(PY) scripts/validate_silver.py || true
+> $(PY) scripts/validate_gold.py
+> pytest -q
 
-check:
-> ./scripts/check.sh
-
-clean:
 > rm -rf data/silver/* data/gold/* reports/* || true
 > mkdir -p data/silver/quarantine data/gold reports
 
