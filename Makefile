@@ -63,3 +63,19 @@ reset:
 print-vars:
 > @echo "GEN_DAYS='$(GEN_DAYS)' origin=$(origin GEN_DAYS)"
 > @echo "GEN_SEED='$(GEN_SEED)' origin=$(origin GEN_SEED)"
+
+returns: gold
+> @echo "Extracting returns/adjustments..."
+> python3 -c "import pandas as pd, glob; \
+>   df = pd.concat([pd.read_csv(f) for f in glob.glob('data/silver/quarantine/*.csv')]); \
+>   returns = df[df['_bad_reason'].str.contains('neg_or_zero_qty')]; \
+>   returns.to_csv('data/gold/fact_returns.csv', index=False); \
+>   print(f'Extracted {len(returns)} potential returns')"
+
+
+dashboard: validate
+> python3 scripts/dq_dashboard.py
+
+trends: validate
+> python3 scripts/update_trends.py
+

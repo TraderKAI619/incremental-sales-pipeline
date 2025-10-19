@@ -41,15 +41,12 @@ jobs:
       - name: Clean workspace
         run: make clean || true
 
-      # 建好資料管線（ingest → silver → gold → validate → demo）
       - name: Build pipeline
         run: make run
 
-      # 冪等性 + 單元測試 + quarantine 比例門檻
       - name: Check (idempotency + tests + quarantine)
         run: make check
 
-      # 產物上傳：失敗也上傳，方便除錯
       - name: Upload report/artifacts
         if: always()
         uses: actions/upload-artifact@v4
