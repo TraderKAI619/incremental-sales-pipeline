@@ -6,11 +6,24 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: "0 20 * * *"   # UTC 20:00 = JST 05:00
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      PYTHONUTF8: "1"
+      LC_ALL: C.UTF-8
+      LANG: C.UTF-8
     steps:
       - uses: actions/checkout@v4
 
@@ -25,7 +38,10 @@ jobs:
           python -m pip install -U pip
           python -m pip install -r requirements.txt pytest pytest-cov
 
-      # 建好資料管線（ingest → silver → gold → validate）
+      - name: Clean workspace
+        run: make clean || true
+
+      # 建好資料管線（ingest → silver → gold → validate → demo）
       - name: Build pipeline
         run: make run
 
@@ -33,11 +49,14 @@ jobs:
       - name: Check (idempotency + tests + quarantine)
         run: make check
 
-      # 產物上傳，方便在 Actions 介面下載查看
+      # 產物上傳：失敗也上傳，方便除錯
       - name: Upload report/artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: gold-and-dq
+          retention-days: 7
+          if-no-files-found: warn
           path: |
             data/gold/fact_sales.csv
             reports/dq_report.md
