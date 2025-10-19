@@ -60,18 +60,7 @@ check: silver
 > ./scripts/check.sh
 
 # Monitoring targets
-returns: gold
-> @echo "Extracting returns/adjustments..."
-> $(PY) -c "import pandas as pd, glob; \
->   df = pd.concat([pd.read_csv(f) for f in glob.glob('data/silver/quarantine/*.csv')]); \
->   returns = df[df['_bad_reason'].str.contains('neg_or_zero_qty')]; \
->   returns.to_csv('data/gold/fact_returns.csv', index=False); \
->   print(f'Extracted {len(returns)} potential returns')"
-
 # Generate comprehensive dashboard
-trends: validate
-> $(PY) scripts/update_trends.py
-
 # Cleanup
 clean:
 > rm -rf data/silver/* data/gold/* reports/* || true
