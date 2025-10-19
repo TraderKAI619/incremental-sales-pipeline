@@ -100,3 +100,4 @@ def test_quarantine_reasonable_under_25pct():
     if total > 0:
         pct = (total_bad / total) * 100
         assert pct < 25.0, f"quarantine too high: {pct:.1f}% ({total_bad}/{total})"
+
