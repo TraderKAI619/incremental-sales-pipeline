@@ -39,7 +39,7 @@ fi
 echo
 
 echo "📝 Update in README.md:"
-echo "  1) Quality Metrics date (Last run: YYYY-MM-DD)"
-echo "  2) Pass/Quarantine numbers & Gold Output"
-echo "  3) Mermaid labels (Clean/Quarantine/Gold rows + Pass/Fail %)"
-echo "  4) Performance Snapshot if benchmarks re-ran"
+echo "  1) Update 'Quality Metrics' date (Last run: YYYY-MM-DD)"
+echo "  2) Update Pass/Quarantine numbers & Gold Output"
+echo "  3) Update Mermaid labels (Clean/Quarantine/Gold rows + Pass/Fail %)"
+echo "  4) Update 'Performance Snapshot' if you re-ran benchmarks"

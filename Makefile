@@ -90,6 +90,7 @@ trends: validate
 > @echo "✅ Trends updated in reports/quarantine_trends.csv"
 
 
+
 .PHONY: readme-check
 readme-check:
 	@bash scripts/suggest_readme_updates.sh || true
