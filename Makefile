@@ -93,4 +93,4 @@ trends: validate
 
 .PHONY: readme-check
 readme-check:
-	@bash scripts/suggest_readme_updates.sh || true
+> @bash scripts/suggest_readme_updates.sh || true
