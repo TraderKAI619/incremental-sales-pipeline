@@ -10,3 +10,12 @@ data/gold/
 # reports
 reports/
 !reports/.keep
+# local backups
+*.bak
+*.backup.*
+# editors
+.vscode/
+# python cache
+**/__pycache__/
+# (可選) local reports if不想入庫
+# reports/
