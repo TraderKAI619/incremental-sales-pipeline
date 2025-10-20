@@ -13,8 +13,7 @@ pip install -r requirements.txt
 # 2) One-command run (ingest → silver → gold → DQ → demo)
 make run
 
-# 3) Run tests (8 checks incl. idempotency & NK uniqueness)
-pytest -q tests/
+# 3) Run tests (idempotency + data-quality)
 ```
 
 ---
@@ -35,56 +34,57 @@ Our pipeline implements comprehensive data quality checks across 5 categories:
 | **Timezone (タイムゾーン)** | `order_date` normalized to JST (YYYYMMDD) | `scripts/generate_sales.py`, `scripts/to_silver.py` |
 | **Schema (スキーマ)** | Column types, primary/foreign key compliance | `schemas/*.schema.json` validation |
 
-**Quality Metrics:**
-- ✅ Pass Rate: 95.2% (772/811 records)
-- ⚠️ Quarantine: 4.8% with detailed failure reasons
-- 🎯 Threshold: <25% quarantine (currently 13%)
+**Quality Metrics** _(Last run: 2025-10-20)_:
+- ✅ **Pass Rate**: **95.2%** (857/900 records)
+- ⚠️ **Quarantine**: **4.8%** (43 records) with detailed reasons
+- 📊 **Gold Output**: **310** aggregated rows + **11** returns
+- 🎯 **Alert Threshold**: <25% quarantine rate
 
-<<<<<<< HEAD
-**📊 View Latest Reports:**
-All quality reports are automatically generated and available in [GitHub Actions Artifacts](https://github.com/TraderKAI619/incremental-sales-pipeline/actions/workflows/ci.yml?query=branch%3Amain):
-- `dq_report.md` - Silver + Gold validation summary
-- `dq_dashboard.txt` - Comprehensive quality dashboard (2KB)
-- `quarantine_trends.csv` - Historical quality tracking
-- `fact_returns.csv` - Returns/adjustments analysis
-=======
->>>>>>> 2fde722 (docs: dedupe latest reports section)
+**📊 View Latest Reports:**  
+All quality reports are generated in CI and available in **Artifacts**:
+- `dq_report.md` — Silver + Gold validation summary
+- `dq_dashboard.txt` — Comprehensive quality dashboard
+- `quarantine_trends.csv` — Historical tracking
+- `fact_returns.csv` — Returns/adjustments analysis
 
-> 💡 **Tip:** Click on the latest successful workflow run → Scroll to "Artifacts" section → Download reports
+> 💡 Tip: Open the latest successful workflow run → **Artifacts** → Download.
 
 ```mermaid
 graph TD
-    subgraph Bronze
-        A[Raw CSV Files<br/>7 days data]
-    end
-    
-    subgraph Silver
-        B[Data Validation<br/>5 DQ Layers]
-        C[Clean Data<br/>772 records]
-        D[Quarantine<br/>39 records]
-    end
-    
-    subgraph Gold
-        E[fact_sales<br/>261 rows]
-        F[fact_returns<br/>11 rows]
-    end
-    
-    subgraph Monitoring
-        G[DQ Report]
-        H[Dashboard]
-        I[Trends]
-    end
-    
-    A -->|Ingest| B
-    B -->|Pass 95.2%| C
-    B -->|Fail 4.8%| D
-    C -->|Aggregate| E
-    D -->|Extract| F
-    E --> G
-    E --> H
-    C --> I
-    
-    style B fill:#f9f,stroke:#333
-    style C fill:#9f9,stroke:#333
-    style D fill:#f99,stroke:#333
+  A[Raw CSV Files<br/>8 days data] -->|Ingest| B
+
+  subgraph Silver
+    B[Data Validation<br/>5 DQ Layers]
+    C[Clean Data<br/>857 records]
+    D[Quarantine<br/>43 records]
+  end
+
+  subgraph Gold
+    E[fact_sales<br/>310 rows]
+    F[fact_returns<br/>11 rows]
+  end
+
+  B -->|Pass 95.2%| C
+  B -->|Fail 4.8%| D
+  C -->|Aggregate| E
+  D -->|Extract| F
 ```
+
+## Design Notes & Provenance
+- Decisions (ADR-lite): see DECISIONS.md
+- Quarantine examples: see data/silver/quarantine/README.md
+
+## Tooling & Authorship
+
+I used AI assistants for **boilerplate and documentation polish** only.
+**All pipeline logic (idempotent upserts), DQ rules (5 layers), schemas, tests, and CI gates are my own work.**
+Metrics in this README are reproducible from this repo’s **CI Artifacts** (see “View Latest Reports”) and
+from local files under `reports/` / `data/gold/`.
+
+---
+
+## 
+```bash
+# 更新 returns/gold 實際列數（不含表頭）
+awk 'NR>1' data/gold/fact_returns.csv | wc -l
+awk 'NR>1' data/gold/fact_sales.csv   | wc -l
