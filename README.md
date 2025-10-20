@@ -51,23 +51,22 @@ All quality reports are generated in CI and available in **Artifacts**:
 
 ```mermaid
 graph TD
-  A[Raw CSV Files<br/>8 days data] -->|Ingest| B
-
   subgraph Silver
     B[Data Validation<br/>5 DQ Layers]
     C[Clean Data<br/>857 records]
     D[Quarantine<br/>43 records]
   end
-
   subgraph Gold
     E[fact_sales<br/>310 rows]
     F[fact_returns<br/>11 rows]
   end
 
+  A[Raw CSV Files<br/>8 days data] -->|Ingest| B
   B -->|Pass 95.2%| C
   B -->|Fail 4.8%| D
   C -->|Aggregate| E
   D -->|Extract| F
+
 ```
 
 ## Design Notes & Provenance
