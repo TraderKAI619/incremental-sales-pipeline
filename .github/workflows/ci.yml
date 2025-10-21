@@ -50,11 +50,11 @@ jobs:
       - name: Build dashboard
         run: make dashboard
 
-      - name: Upload report/artifacts
+      - name: Upload artifacts (dq + reports)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gold-and-dq
+          name: dq-and-reports
           retention-days: 7
           if-no-files-found: warn
           path: |
